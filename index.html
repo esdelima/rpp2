@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPP Generator - Pembelajaran Mendalam</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #f8f9fc;
+            --accent-color: #2e59d9;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .sidebar {
+            background-color: var(--secondary-color);
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            width: 280px;
+        }
+        
+        .main-content {
+            margin-left: 280px;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .card {
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            margin-bottom: 20px;
+            border: none;
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            border-radius: 0.35rem 0.35rem 0 0 !important;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        
+        .form-control, .form-select {
+            border-radius: 0.35rem;
+        }
+        
+        .rpp-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+        
+        .sub-title {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+        
+        .dimension-checkbox {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .dimension-checkbox input {
+            margin-right: 8px;
+        }
+        
+        .nav-link {
+            color: #333;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-link.active {
+            color: var(--primary-color);
+            background-color: rgba(78, 115, 223, 0.1);
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+        
+        .step-content {
+            display: none;
+        }
+        
+        .step-content.active {
+            display: block;
+        }
+        
+        .btn-next {
+            float: right;
+        }
+        
+        .btn-prev {
+            float: left;
+        }
+        
+        .navigation-buttons {
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        
+        .edit-btn {
+            margin-top: 10px;
+        }
+        
+        .editable-content {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .print-only {
+            display: none;
+        }
+        
+        .logo-sekolah {
+            max-width: 100px;
+            margin-bottom: 15px;
+        }
+        
+        .text-center-print {
+            text-align: center;
+        }
+        
+        .ttd-section {
+            margin-top: 50px;
+        }
+        
+        .ttd-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .ttd-box {
+            width: 45%;
+        }
+        
+        .ttd-space {
+            height: 80px;
+        }
+        
+        .data-awal-grid {
+            display: grid;
+            grid-template-columns: max-content 1fr;
+            gap: 10px 15px;
+        }
+        
+        .data-awal-label {
+            font-weight: bold;
+        }
+        
+        .pedagogis-grid {
+            display: grid;
+            grid-template-columns: max-content 1fr;
+            gap: 10px;
+        }
+        
+        .pedagogis-label {
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        
+        .print-content {
+            display: none;
+            padding: 20px;
+        }
+        
+        .generated-content h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            .print-content, .print-content * {
+                visibility: visible;
+            }
+            
+            .print-content {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 20px;
+                margin: 0;
+            }
+            
+            @page {
+                size: A4;
+                margin: 15mm;
+            }
+            
+            body {
+                background-color: white !important;
+                font-size: 12pt;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .card {
+                box-shadow: none !important;
+                border: none !important;
+            }
+            
+            .card-header {
+                background-color: white !important;
+                color: black !important;
+                font-weight: bold;
+                border-bottom: 1px solid #ddd !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                height: auto;
+                width: 100%;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Menu -->
+            <div class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3 no-print">
+                <h4 class="text-center mb-4">RPP Generator</h4>
+                
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" data-step="step1">1. Data Awal</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-step="step2">2. Identifikasi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-step="step3">3. Desain Pembelajaran</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-step="step4">4. Pengalaman Belajar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-step="step5">5. Asesmen</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-step="step6">6. Ringkasan RPP</a>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 ms-sm-auto main-content">
+                <!-- Step 1: Data Awal -->
+                <div id="step1" class="step-content active">
+                    <div class="card mb-4">
+                        <div class="card-header">Data Awal</div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Satuan Pendidikan</label>
+                                <input type="text" class="form-control" id="satuanPendidikan" value="SD Negeri 5 Cakranegara">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Mata Pelajaran</label>
+                                <input type="text" class="form-control" id="mataPelajaran">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Fase/Kelas/Semester</label>
+                                <input type="text" class="form-control" id="kelasSemester">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Jumlah Pertemuan</label>
+                                <input type="number" class="form-control" id="jumlahPertemuan" min="1" value="1">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Alokasi Waktu per Pertemuan</label>
+                                <input type="text" class="form-control" id="alokasiWaktu">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button class="btn btn-primary btn-next" data-next="step2">Selanjutnya</button>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Identifikasi -->
+                <div id="step2" class="step-content">
+                    <div class="card mb-4">
+                        <div class="card-header">Identifikasi</div>
+                        <div class="card-body">
+                            <h5 class="sub-title mb-3">Dimensi Profil Lulusan:</h5>
+                            <div class="form-check dimension-checkbox">
+                                <input class="form-check-input" type="checkbox" id="dimensi1">
+                                <label class="form-check-label" for="dimensi1">Keimanan dan Ketakwaan terhadap Tuhan YME</label>
+                            </div>
+                            <div class="form-check dimension-checkbox">
+                                <input class="form-check-input" type="checkbox" id="dimensi2">
+                                <label class="form-check-label" for="dimensi2">Kewargaan</label>
+                            </div>
+                            <div class="form-check dimension-checkbox">
+                                <input class="form-check-input" type="checkbox" id="dimensi3">
+                                <label class="form-check-label" for="dimensi3">Penalaran Kritis</label>
+                            </div>
+                            <div class="form-check dimension-checkbox">
+                                <input class="form-check-input" type="checkbox" id="dimensi4">
+                                <label class="form-check-label" for="dimensi4">Kreativitas</label>
+                            </div>
+                            <div class="form-check dimension-checkbox">
+                                <input class="form-check-input" type="checkbox" id="dimensi5">
+                                <label class="form-check-label" for="dimensi5">Kolaborasi</label>
+                            </div>
+                            <div class="form-check dimension-checkbox">
+                                <input class="form-check-input" type="checkbox" id="dimensi6">
+                                <label class="form-check-label" for="dimensi6">Kemandirian</label>
+                            </div>
+                            <div class="form-check dimension-checkbox">
+                                <input class="form-check-input" type="checkbox" id="dimensi7">
+                                <label class="form-check-label" for="dimensi7">Kesehatan</label>
+                            </div>
+                            <div class="form-check dimension-checkbox">
+                                <input class="form-check-input" type="checkbox" id="dimensi8">
+                                <label class="form-check-label" for="dimensi8">Komunikasi</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button class="btn btn-outline-primary btn-prev" data-prev="step1">Sebelumnya</button>
+                        <button class="btn btn-primary btn-next" data-next="step3">Selanjutnya</button>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Desain Pembelajaran -->
+                <div id="step3" class="step-content">
+                    <div class="card mb-4">
+                        <div class="card-header">Desain Pembelajaran</div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Tujuan Pembelajaran</label>
+                                <textarea class="form-control" id="tujuanPembelajaran" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Praktik Pedagogis</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="pedagogisOption" id="pedagogisManual" value="manual" checked>
+                                    <label class="form-check-label" for="pedagogisManual">Manual</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="pedagogisOption" id="pedagogisOtomatis" value="otomatis">
+                                    <label class="form-check-label" for="pedagogisOtomatis">Otomatis</label>
+                                </div>
+                                <div class="pedagogis-grid">
+                                    <div class="pedagogis-label">Model Pembelajaran:</div>
+                                    <input type="text" class="form-control mb-2" id="modelPembelajaran">
+                                    
+                                    <div class="pedagogis-label">Metode Pembelajaran:</div>
+                                    <input type="text" class="form-control mb-2" id="metodePembelajaran">
+                                    
+                                    <div class="pedagogis-label">Strategi Pembelajaran:</div>
+                                    <input type="text" class="form-control" id="strategiPembelajaran">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="kemitraanOtomatis">
+                                    <label class="form-check-label" for="kemitraanOtomatis">Generate Otomatis Kemitraan Pembelajaran</label>
+                                </div>
+                                <label class="form-label">Kemitraan Pembelajaran (opsional)</label>
+                                <textarea class="form-control" id="kemitraanPembelajaran" rows="2"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Lingkungan Pembelajaran</label>
+                                <textarea class="form-control" id="lingkunganPembelajaran" rows="2"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="digitalOtomatis">
+                                    <label class="form-check-label" for="digitalOtomatis">Generate Otomatis Pemanfaatan Digital</label>
+                                </div>
+                                <label class="form-label">Pemanfaatan Digital (opsional)</label>
+                                <textarea class="form-control" id="pemanfaatanDigital" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button class="btn btn-outline-primary btn-prev" data-prev="step2">Sebelumnya</button>
+                        <button class="btn btn-primary btn-next" data-next="step4">Selanjutnya</button>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Pengalaman Belajar -->
+                <div id="step4" class="step-content">
+                    <div class="card mb-4">
+                        <div class="card-header">Pengalaman Belajar</div>
+                        <div class="card-body">
+                            <button id="generateBtn" class="btn btn-primary w-100 mb-4">Generate Langkah Pembelajaran</button>
+                            <div id="pengalamanBelajarResult" class="editable-content generated-content" contenteditable="false"></div>
+                            <button id="editPengalamanBtn" class="btn btn-outline-primary edit-btn">Edit</button>
+                            <button id="savePengalamanBtn" class="btn btn-primary edit-btn" style="display:none;">Simpan</button>
+                        </div>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button class="btn btn-outline-primary btn-prev" data-prev="step3">Sebelumnya</button>
+                        <button class="btn btn-primary btn-next" data-next="step5">Selanjutnya</button>
+                    </div>
+                </div>
+                
+                <!-- Step 5: Asesmen -->
+                <div id="step5" class="step-content">
+                    <div class="card mb-4">
+                        <div class="card-header">Asesmen</div>
+                        <div class="card-body">
+                            <div id="asesmenResult" class="editable-content generated-content" contenteditable="false"></div>
+                            <button id="editAsesmenBtn" class="btn btn-outline-primary edit-btn">Edit</button>
+                            <button id="saveAsesmenBtn" class="btn btn-primary edit-btn" style="display:none;">Simpan</button>
+                        </div>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button class="btn btn-outline-primary btn-prev" data-prev="step4">Sebelumnya</button>
+                        <button class="btn btn-primary btn-next" data-next="step6">Selanjutnya</button>
+                    </div>
+                </div>
+                
+                <!-- Step 6: Ringkasan RPP -->
+                <div id="step6" class="step-content">
+                    <div class="card mb-4 no-print">
+                        <div class="card-body">
+                            <button class="btn btn-success mb-3" id="printBtn">Cetak RPP</button>
+                            <p>Pastikan semua data sudah benar sebelum mencetak.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Konten yang akan dicetak -->
+                    <div id="printRPP" class="print-content">
+                        <div class="text-center-print">
+                            <img src="https://iili.io/FhyWsus.png" alt="Logo Sekolah" class="logo-sekolah">
+                            <h2>Rencana Pelaksanaan Pembelajaran</h2>
+                            <h4 class="sub-title">Pendekatan Pembelajaran Mendalam</h4>
+                        </div>
+                        
+                        <div class="data-awal-grid">
+                            <div class="data-awal-label">Satuan Pendidikan:</div>
+                            <div id="printSatuanPendidikan">SD Negeri 5 Cakranegara</div>
+                            
+                            <div class="data-awal-label">Mata Pelajaran:</div>
+                            <div id="printMataPelajaran"></div>
+                            
+                            <div class="data-awal-label">Kelas/Semester:</div>
+                            <div id="printKelasSemester"></div>
+                            
+                            <div class="data-awal-label">Jumlah Pertemuan:</div>
+                            <div id="printJumlahPertemuan"></div>
+                            
+                            <div class="data-awal-label">Alokasi Waktu:</div>
+                            <div id="printAlokasiWaktu"></div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="row mt-3">
+                            <div class="col-md-2">
+                                <p><strong>Identifikasi:</strong></p>
+                            </div>
+                            <div class="col-md-10">
+                                <p><strong>Dimensi Profil Lulusan:</strong></p>
+                                <ul id="printDimensi" style="list-style-type: none; padding-left: 0;">
+                                    <li><span class="d-inline-block" style="width: 20px;">□</span> Keimanan dan Ketakwaan terhadap Tuhan YME</li>
+                                    <li><span class="d-inline-block" style="width: 20px;">□</span> Kewargaan</li>
+                                    <li><span class="d-inline-block" style="width: 20px;">□</span> Penalaran Kritis</li>
+                                    <li><span class="d-inline-block" style="width: 20px;">□</span> Kreativitas</li>
+                                    <li><span class="d-inline-block" style="width: 20px;">□</span> Kolaborasi</li>
+                                    <li><span class="d-inline-block" style="width: 20px;">□</span> Kemandirian</li>
+                                    <li><span class="d-inline-block" style="width: 20px;">□</span> Kesehatan</li>
+                                    <li><span class="d-inline-block" style="width: 20px;">□</span> Komunikasi</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="row mt-3">
+                            <div class="col-md-2">
+                                <p><strong>Desain Pembelajaran:</strong></p>
+                            </div>
+                            <div class="col-md-10">
+                                <p><strong>Tujuan Pembelajaran:</strong></p>
+                                <p id="printTujuanPembelajaran"></p>
+                                
+                                <p><strong>Praktik Pedagogis:</strong></p>
+                                <div class="pedagogis-grid">
+                                    <div class="pedagogis-label">Model Pembelajaran:</div>
+                                    <div id="printModelPembelajaran">-</div>
+                                    
+                                    <div class="pedagogis-label">Metode Pembelajaran:</div>
+                                    <div id="printMetodePembelajaran">-</div>
+                                    
+                                    <div class="pedagogis-label">Strategi Pembelajaran:</div>
+                                    <div id="printStrategiPembelajaran">-</div>
+                                </div>
+                                
+                                <p><strong>Kemitraan Pembelajaran:</strong></p>
+                                <p id="printKemitraanPembelajaran">-</p>
+                                
+                                <p><strong>Lingkungan Pembelajaran:</strong></p>
+                                <p id="printLingkunganPembelajaran"></p>
+                                
+                                <p><strong>Pemanfaatan Digital:</strong></p>
+                                <p id="printPemanfaatanDigital">-</p>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="row mt-3">
+                            <div class="col-md-2">
+                                <p><strong>Pengalaman Belajar:</strong></p>
+                            </div>
+                            <div class="col-md-10">
+                                <div id="printPengalamanBelajar"></div>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="row mt-3">
+                            <div class="col-md-2">
+                                <p><strong>Asesmen Pembelajaran:</strong></p>
+                            </div>
+                            <div class="col-md-10">
+                                <div id="printAsesmen"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="ttd-section">
+                            <div class="ttd-container">
+                                <div class="ttd-box">
+                                    <p>Mengetahui,</p>
+                                    <p>Kepala Sekolah</p>
+                                    <div class="ttd-space"></div>
+                                    <p>Baiq Nurul Hidayani, S.Pd.</p>
+                                    <p>NIP. 19751218 199707 2 001</p>
+                                </div>
+                                <div class="ttd-box">
+                                    <p id="printTanggal">Mataram, </p>
+                                    <p>Guru Kelas</p>
+                                    <div class="ttd-space"></div>
+                                    <p id="printNamaGuru"></p>
+                                    <p id="printNIPGuru"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4 no-print">
+                        <div class="card-header">Informasi Tambahan</div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Nama Guru</label>
+                                <input type="text" class="form-control" id="namaGuru">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">NIP Guru</label>
+                                <input type="text" class="form-control" id="nipGuru">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="navigation-buttons no-print">
+                        <button class="btn btn-outline-primary btn-prev" data-prev="step5">Sebelumnya</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // API Key Gemini
+        const GEMINI_API_KEY = 'AIzaSyAefWSnrsaLzNItcZCgmkivQYlhhE5HfGg';
+        
+        // Fungsi untuk mengubah step
+        function changeStep(step) {
+            // Sembunyikan semua step
+            document.querySelectorAll('.step-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Tampilkan step yang dipilih
+            document.getElementById(step).classList.add('active');
+            
+            // Update menu sidebar
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-step') === step) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Jika step ringkasan, update display
+            if (step === 'step6') {
+                updateSummaryDisplay();
+            }
+        }
+        
+        // Fungsi untuk update tampilan ringkasan
+        function updateSummaryDisplay() {
+            // Update data untuk tampilan
+            document.getElementById('printSatuanPendidikan').textContent = document.getElementById('satuanPendidikan').value;
+            document.getElementById('printMataPelajaran').textContent = document.getElementById('mataPelajaran').value;
+            document.getElementById('printKelasSemester').textContent = document.getElementById('kelasSemester').value;
+            document.getElementById('printJumlahPertemuan').textContent = document.getElementById('jumlahPertemuan').value;
+            document.getElementById('printAlokasiWaktu').textContent = document.getElementById('alokasiWaktu').value;
+            
+            // Update Dimensi Profil Lulusan dengan checkbox
+            for (let i = 1; i <= 8; i++) {
+                const checkbox = document.getElementById(`dimensi${i}`);
+                const listItem = document.querySelector(`#printDimensi li:nth-child(${i}) span`);
+                listItem.textContent = checkbox.checked ? '☑' : '□';
+            }
+            
+            // Update Tujuan Pembelajaran
+            document.getElementById('printTujuanPembelajaran').textContent = document.getElementById('tujuanPembelajaran').value || '-';
+            
+            // Update Praktik Pedagogis
+            document.getElementById('printModelPembelajaran').textContent = document.getElementById('modelPembelajaran').value || '-';
+            document.getElementById('printMetodePembelajaran').textContent = document.getElementById('metodePembelajaran').value || '-';
+            document.getElementById('printStrategiPembelajaran').textContent = document.getElementById('strategiPembelajaran').value || '-';
+            
+            // Update Kemitraan Pembelajaran
+            const kemitraan = document.getElementById('kemitraanPembelajaran').value;
+            document.getElementById('printKemitraanPembelajaran').textContent = kemitraan || '-';
+            
+            // Update Lingkungan Pembelajaran
+            document.getElementById('printLingkunganPembelajaran').textContent = document.getElementById('lingkunganPembelajaran').value || '-';
+            
+            // Update Pemanfaatan Digital
+            const digital = document.getElementById('pemanfaatanDigital').value;
+            document.getElementById('printPemanfaatanDigital').textContent = digital || '-';
+            
+            // Update Pengalaman Belajar
+            const pengalamanBelajar = document.getElementById('pengalamanBelajarResult').innerHTML;
+            document.getElementById('printPengalamanBelajar').innerHTML = pengalamanBelajar || '<p>Belum digenerate</p>';
+            
+            // Update Asesmen
+            const asesmen = document.getElementById('asesmenResult').innerHTML;
+            document.getElementById('printAsesmen').innerHTML = asesmen || '<p>Belum digenerate</p>';
+            
+            // Update Informasi Guru
+            document.getElementById('printNamaGuru').textContent = document.getElementById('namaGuru').value || '_________________________';
+            document.getElementById('printNIPGuru').textContent = document.getElementById('nipGuru').value ? 'NIP. ' + document.getElementById('nipGuru').value : 'NIP. _________________________';
+            
+            // Update Tanggal
+            const today = new Date();
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            document.getElementById('printTanggal').textContent = 'Mataram, ' + today.toLocaleDateString('id-ID', options);
+        }
+        
+        // Event listener untuk menu sidebar
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                changeStep(this.getAttribute('data-step'));
+            });
+        });
+        
+        // Event listener untuk tombol next
+        document.querySelectorAll('.btn-next').forEach(button => {
+            button.addEventListener('click', function() {
+                const nextStep = this.getAttribute('data-next');
+                changeStep(nextStep);
+            });
+        });
+        
+        // Event listener untuk tombol prev
+        document.querySelectorAll('.btn-prev').forEach(button => {
+            button.addEventListener('click', function() {
+                const prevStep = this.getAttribute('data-prev');
+                changeStep(prevStep);
+            });
+        });
+        
+        // Fungsi untuk generate langkah pembelajaran
+        document.getElementById('generateBtn').addEventListener('click', async function() {
+            const mataPelajaran = document.getElementById('mataPelajaran').value;
+            const kelasSemester = document.getElementById('kelasSemester').value;
+            const tujuanPembelajaran = document.getElementById('tujuanPembelajaran').value;
+            const dimensi = [];
+            
+            for (let i = 1; i <= 8; i++) {
+                const checkbox = document.getElementById(`dimensi${i}`);
+                if (checkbox.checked) {
+                    dimensi.push(checkbox.nextElementSibling.textContent);
+                }
+            }
+            
+            if (!mataPelajaran || !kelasSemester || !tujuanPembelajaran || dimensi.length === 0) {
+                alert('Harap lengkapi semua data yang diperlukan sebelum generate!');
+                return;
+            }
+            
+            // Tampilkan loading
+            const generateBtn = document.getElementById('generateBtn');
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Memproses...';
+            
+            try {
+                // Generate langkah pembelajaran
+                const langkahPembelajaran = await generateLangkahPembelajaran(
+                    mataPelajaran, 
+                    kelasSemester, 
+                    tujuanPembelajaran, 
+                    dimensi
+                );
+                
+                // Tampilkan hasil
+                document.getElementById('pengalamanBelajarResult').innerHTML = langkahPembelajaran;
+                
+                // Jika praktik pedagogis otomatis, update juga
+                if (document.getElementById('pedagogisOtomatis').checked) {
+                    const praktikPedagogis = await generatePraktikPedagogis(tujuanPembelajaran);
+                    const parts = praktikPedagogis.split('\n');
+                    
+                    // Isi model, metode, dan strategi pembelajaran
+                    if (parts.length >= 3) {
+                        document.getElementById('modelPembelajaran').value = parts[0].replace('Model Pembelajaran:', '').trim();
+                        document.getElementById('metodePembelajaran').value = parts[1].replace('Metode Pembelajaran:', '').trim();
+                        document.getElementById('strategiPembelajaran').value = parts[2].replace('Strategi Pembelajaran:', '').trim();
+                    } else {
+                        // Jika format tidak sesuai, isi semua ke model pembelajaran
+                        document.getElementById('modelPembelajaran').value = praktikPedagogis;
+                    }
+                }
+                
+                // Jika kemitraan otomatis, generate
+                if (document.getElementById('kemitraanOtomatis').checked) {
+                    const kemitraan = await generateKemitraanPembelajaran(tujuanPembelajaran);
+                    document.getElementById('kemitraanPembelajaran').value = kemitraan;
+                }
+                
+                // Jika digital otomatis, generate
+                if (document.getElementById('digitalOtomatis').checked) {
+                    const digital = await generatePemanfaatanDigital(tujuanPembelajaran);
+                    document.getElementById('pemanfaatanDigital').value = digital;
+                }
+                
+                // Generate asesmen
+                const asesmen = await generateAsesmen(tujuanPembelajaran);
+                document.getElementById('asesmenResult').innerHTML = asesmen;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat generate. Silakan coba lagi.');
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.textContent = 'Generate Langkah Pembelajaran';
+            }
+        });
+        
+        // Fungsi untuk edit content
+        document.getElementById('editPengalamanBtn').addEventListener('click', function() {
+            document.getElementById('pengalamanBelajarResult').setAttribute('contenteditable', 'true');
+            document.getElementById('pengalamanBelajarResult').focus();
+            this.style.display = 'none';
+            document.getElementById('savePengalamanBtn').style.display = 'inline-block';
+        });
+        
+        document.getElementById('savePengalamanBtn').addEventListener('click', function() {
+            document.getElementById('pengalamanBelajarResult').setAttribute('contenteditable', 'false');
+            this.style.display = 'none';
+            document.getElementById('editPengalamanBtn').style.display = 'inline-block';
+        });
+        
+        document.getElementById('editAsesmenBtn').addEventListener('click', function() {
+            document.getElementById('asesmenResult').setAttribute('contenteditable', 'true');
+            document.getElementById('asesmenResult').focus();
+            this.style.display = 'none';
+            document.getElementById('saveAsesmenBtn').style.display = 'inline-block';
+        });
+        
+        document.getElementById('saveAsesmenBtn').addEventListener('click', function() {
+            document.getElementById('asesmenResult').setAttribute('contenteditable', 'false');
+            this.style.display = 'none';
+            document.getElementById('editAsesmenBtn').style.display = 'inline-block';
+        });
+        
+        // Fungsi untuk generate langkah pembelajaran menggunakan Gemini API
+        async function generateLangkahPembelajaran(mataPelajaran, kelasSemester, tujuanPembelajaran, dimensi) {
+            const prompt = `Buatkan langkah-langkah pembelajaran mendalam untuk mata pelajaran ${mataPelajaran} kelas ${kelasSemester} dengan tujuan pembelajaran: "${tujuanPembelajaran}" yang mencakup dimensi profil lulusan: ${dimensi.join(', ')}. 
+            
+            Langkah-langkah harus mencerminkan tiga tahap: 
+            1. Memahami:  Tahap awal peserta didik untuk aktif mengkonstruksi pengetahuan agar dapat memahami secara mendalam konsep atau materi dari berbagai sumber dan konteks. (tuliskan prinsip pembelajaran yang digunakan: berkesadaran, bermakna, dan/atau menggembirakan)
+Tuliskan kegiatan pembelajaran yang memfasilitasi peserta didik untuk terlibat aktif mengonstruksi pengetahuan agar dapat memahami secara mendalam konsep atau materi dari berbagai sumber dan konteks. Pengetahuan pada fase ini terdiri dari pengetahuan esensial, pengetahuan aplikatif, dan pengetahuan nilai dan karakter.
+            2. Mengaplikasi:  Pengalaman belajar yang menunjukan aktivitas peserta didik mengaplikasi pengetahuan dalam kehidupan secara kontekstual. (tuliskan prinsip pembelajaran yang digunakan: berkesadaran, bermakna, dan/atau menggembirakan)
+Tuliskan kegiatan yang mengondisikan pengalaman belajar yang menunjukan aktivitas peserta didik mengaplikasi pemahaman secara kontekstual atau kehidupan nyata (hidup, kehidupan, dan/atau penghidupan). Proses mengaplikasi ini merupakan bagian dari pendalaman pengetahuan untuk menghasilkan pengembangan kompetensi
+            3. Merefleksi:  Proses di mana peserta didik mengevaluasi dan 
+memaknai proses serta hasil dari tindakan atau praktik nyata yang telah mereka lakukan. (tuliskan prinsip pembelajaran yang digunakan: berkesadaran, bermakna, dan/atau menggembirakan)
+Tuliskan kegiatan yang mampu memfasilitasi peserta didik:
+a. mengevaluasi dan memaknai proses serta hasil dari tindakan atau praktik nyata yang telah mereka lakukan dan menentukan tindaklanjut ke depan.
+b. mengelola proses belajarnya secara mandiri, dengan meneruskan dan mengembangkan strategi belajar yang berhasil dan memperbaiki yang belum berhasil dengan tetap meningkatkan motivasi belajar dan kepercayaan diri.
+
+Berkesadaran adalah Peserta didik memiliki pengalaman belajar yang bermakna ketika mereka secara sadar menjadi pembelajar aktif dan mampu mengatur diri sendiri. Mereka memahami tujuan pembelajaran, termotivasi secara intrinsik, serta mengembangkan strategi belajar untuk mencapai tujuan tersebut.
+
+Bermakna adalah Pembelajaran menjadi bermakna ketika peserta didik merasakan manfaat dan relevansi dari apa yang dipelajari dalam kehidupan sehari-hari. Mereka mampu membangun pengetahuan baru berdasarkan pemahaman sebelumnya dan menerapkannya dalam konteks nyata.
+
+Mengermbirakan adalah Pembelajaran yang menggembirakan menciptakan suasana positif, menyenangkan, dan menantang. Peserta didik merasa dihargai atas partisipasinya serta terhubung secara emosional, sehingga lebih mudah memahami, mengingat, dan mengaplikasikan pengetahuan.
+            
+
+            Format dalam HTML dengan struktur yang rapi tanpa kalimat pembuka. Gunakan heading level 4 (h4) untuk setiap tahap dan bullet points untuk langkah-langkahnya. Pastikan ukuran heading tidak lebih besar dari teks biasa.`;
+            
+            const response = await callGeminiAPI(prompt);
+            return response;
+        }
+        
+        // Fungsi untuk generate praktik pedagogis menggunakan Gemini API
+        async function generatePraktikPedagogis(tujuanPembelajaran) {
+            const prompt = `Rekomendasikan praktik pedagogis yang sesuai untuk mencapai tujuan pembelajaran: "${tujuanPembelajaran}" dengan pendekatan pembelajaran mendalam. 
+            
+            Format jawaban:
+            Model Pembelajaran: [nama model]
+            Metode Pembelajaran: [nama metode]
+            Strategi Pembelajaran: [nama strategi]
+            
+            Contoh:
+            Model Pembelajaran: Pembelajaran Berbasis Proyek
+            Metode Pembelajaran: Diskusi Kelompok
+            Strategi Pembelajaran: Think-Pair-Share
+            
+            Hanya tuliskan nama model, metode, dan strategi saja tanpa penjelasan tambahan.`;
+            
+            const response = await callGeminiAPI(prompt);
+            return response;
+        }
+        
+        // Fungsi untuk generate kemitraan pembelajaran menggunakan Gemini API
+        async function generateKemitraanPembelajaran(tujuanPembelajaran) {
+            const prompt = `Rekomendasikan kemitraan pembelajaran yang sesuai untuk mencapai tujuan pembelajaran: "${tujuanPembelajaran}" dengan pendekatan pembelajaran mendalam. 
+            
+            Berikan rekomendasi yang singkat (1 kalimat) dan spesifik seperti kemitraan dengan orang tua, komunitas, dunia usaha, atau mitra profesional lainnya.`;
+            
+            const response = await callGeminiAPI(prompt);
+            return response;
+        }
+        
+        // Fungsi untuk generate pemanfaatan digital menggunakan Gemini API
+        async function generatePemanfaatanDigital(tujuanPembelajaran) {
+            const prompt = `Rekomendasikan pemanfaatan teknologi digital yang sesuai untuk mencapai tujuan pembelajaran: "${tujuanPembelajaran}" dengan pendekatan pembelajaran mendalam. 
+            
+            Berikan rekomendasi yang singkat (1 kalimat) dan spesifik seperti platform pembelajaran, video, perpustakaan digital, atau alat digital lainnya.`;
+            
+            const response = await callGeminiAPI(prompt);
+            return response;
+        }
+        
+        // Fungsi untuk generate asesmen menggunakan Gemini API
+        async function generateAsesmen(tujuanPembelajaran) {
+            const prompt = `Rekomendasikan teknik dan instrumen asesmen yang sesuai untuk tujuan pembelajaran: "${tujuanPembelajaran}" dengan pendekatan pembelajaran mendalam. 
+            
+            Sertakan asesmen untuk:
+            1. Awal pembelajaran
+            2. Proses pembelajaran
+            3. Akhir pembelajaran
+            
+            Format dalam HTML dengan struktur yang rapi tanpa kalimat pembuka. Gunakan bullet points untuk setiap jenis asesmen. Gunakan heading level 4 (h4) untuk judul bagian dan pastikan ukurannya tidak lebih besar dari teks biasa.`;
+            
+            const response = await callGeminiAPI(prompt);
+            return response;
+        }
+        
+        // Fungsi untuk memanggil Gemini API
+        async function callGeminiAPI(prompt) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: prompt
+                        }]
+                    }]
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.error.message || 'Gagal memanggil API Gemini');
+            }
+            
+            return data.candidates[0].content.parts[0].text;
+        }
+        
+        // Tombol cetak
+        document.getElementById('printBtn').addEventListener('click', function() {
+            updateSummaryDisplay();
+            
+            // Buat iframe untuk mencetak
+            const printFrame = document.createElement('iframe');
+            printFrame.style.position = 'absolute';
+            printFrame.style.width = '0';
+            printFrame.style.height = '0';
+            printFrame.style.border = '0';
+            document.body.appendChild(printFrame);
+            
+            // Salin konten ke iframe
+            printFrame.onload = function() {
+                const printDocument = printFrame.contentWindow.document;
+                printDocument.open();
+                printDocument.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Rencana Pelaksanaan Pembelajaran</title>
+                        <style>
+                            body {
+                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                font-size: 12pt;
+                                padding: 20px;
+                            }
+                            .logo-sekolah {
+                                max-width: 100px;
+                                margin-bottom: 15px;
+                            }
+                            .text-center-print {
+                                text-align: center;
+                            }
+                            .data-awal-grid {
+                                display: grid;
+                                grid-template-columns: max-content 1fr;
+                                gap: 10px 15px;
+                            }
+                            .data-awal-label {
+                                font-weight: bold;
+                            }
+                            .pedagogis-grid {
+                                display: grid;
+                                grid-template-columns: max-content 1fr;
+                                gap: 10px;
+                            }
+                            .pedagogis-label {
+                                font-weight: bold;
+                                white-space: nowrap;
+                            }
+                            .ttd-section {
+                                margin-top: 50px;
+                            }
+                            .ttd-container {
+                                display: flex;
+                                justify-content: space-between;
+                            }
+                            .ttd-box {
+                                width: 45%;
+                            }
+                            .ttd-space {
+                                height: 80px;
+                            }
+                            hr {
+                                margin: 1rem 0;
+                                border: 0;
+                                border-top: 1px solid rgba(0,0,0,.1);
+                            }
+                            h2 {
+                                font-size: 1.5rem;
+                                margin-bottom: 0.5rem;
+                            }
+                            h4 {
+                                font-size: 1.2rem;
+                                margin-bottom: 1rem;
+                            }
+                            .generated-content h4 {
+                                font-size: 1.1rem;
+                                font-weight: 600;
+                                margin-top: 1rem;
+                                margin-bottom: 0.5rem;
+                            }
+                            @page {
+                                size: A4;
+                                margin: 15mm;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        ${document.getElementById('printRPP').innerHTML}
+                    </body>
+                    </html>
+                `);
+                printDocument.close();
+                
+                // Cetak dan hapus iframe setelah selesai
+                setTimeout(function() {
+                    printFrame.contentWindow.focus();
+                    printFrame.contentWindow.print();
+                    document.body.removeChild(printFrame);
+                }, 500);
+            };
+            
+            printFrame.src = 'about:blank';
+        });
+    </script>
+</body>
+</html>
